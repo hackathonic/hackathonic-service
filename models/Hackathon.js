@@ -1,3 +1,5 @@
+const CONSTS = require('../consts');
+
 module.exports = (sequelize, DataTypes) => sequelize.define('hackathon', {
   name: {
     type: DataTypes.STRING,
@@ -10,7 +12,18 @@ module.exports = (sequelize, DataTypes) => sequelize.define('hackathon', {
     allowNull: false
   },
   startDate: DataTypes.DATE,
-  endDate: DataTypes.DATE
+  endDate: DataTypes.DATE,
+  stage: {
+    type: DataTypes.ENUM(
+      CONSTS.STAGE_UNLISTED,
+      CONSTS.STAGE_REGISTRATION,
+      CONSTS.STAGE_RUNNING,
+      CONSTS.STAGE_STOPPED,
+      CONSTS.STAGE_VOTING,
+      CONSTS.STAGE_COMPLETED
+    ),
+    defaultValue: CONSTS.STAGE_UNLISTED
+  }
 }, {
   validate: {
     startDateBeforeEndDate () {
