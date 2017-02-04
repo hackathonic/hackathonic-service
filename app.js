@@ -6,7 +6,6 @@ const express = require('express');
 const http = require('http');
 const bodyParser = require('body-parser');
 const sequelize = require('./sequelize');
-const models = require('./models');
 const epilogue = require('epilogue');
 
 const {
@@ -27,22 +26,10 @@ const server = http.createServer(app);
 epilogue.initialize({ app, sequelize });
 
 // Create REST resource
-epilogue.resource({
-  model: models.Hackathon,
-  endpoints: ['/hackathon', '/hackathon/:id']
-});
-epilogue.resource({
-  model: models.Project,
-  endpoints: ['/project', '/project/:id']
-});
-epilogue.resource({
-  model: models.Person,
-  endpoints: ['/person', '/person/:id']
-});
-epilogue.resource({
-  model: models.Team,
-  endpoints: ['/team', '/team/:id']
-});
+require('./resources/hackathon');
+require('./resources/project');
+require('./resources/team');
+require('./resources/person');
 
 // Create database and listen
 sequelize
