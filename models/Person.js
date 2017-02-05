@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => sequelize.define('person', {
     len: [2, 100]
   },
   id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4(),
     primaryKey: true,
     allowNull: false
   },

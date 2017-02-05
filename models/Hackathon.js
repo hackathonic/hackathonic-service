@@ -6,8 +6,8 @@ module.exports = (sequelize, DataTypes) => sequelize.define('hackathon', {
     allowNull: false
   },
   id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4(),
     primaryKey: true,
     allowNull: false
   },

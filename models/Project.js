@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => sequelize.define('project', {
     defaultValue: ''
   },
   id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4(),
     primaryKey: true,
     allowNull: false
   }
