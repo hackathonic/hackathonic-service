@@ -5,6 +5,6 @@
       "promise"
   ],
   "rules": {
-    "semi": ["error", "always"]
+    "semi": [2, "always"]
   }
 }
