@@ -1,13 +1,13 @@
 const fs = require('fs');
 const models = {};
 const Sequelize = require('sequelize');
-const sequelize = require('../sequelize');
+const database = require('../lib/database');
 
 fs
 .readdirSync('./models')
 .filter(file => (file.indexOf('.') !== 0) && (file !== 'index.js'))
 .forEach(modelName => {
-  models[modelName.replace('.js', '')] = sequelize.import(`./${modelName}`);
+  models[modelName.replace('.js', '')] = database.import(`./${modelName}`);
 });
 
 Object.keys(models).forEach(modelName => {
@@ -16,7 +16,7 @@ Object.keys(models).forEach(modelName => {
   }
 });
 
-models.sequelize = sequelize;
+models.sequelize = database;
 models.Sequelize = Sequelize;
 
 models.Project.belongsTo(models.Hackathon);
