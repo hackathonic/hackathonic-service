@@ -8,8 +8,9 @@ module.exports = (sequelize, DataTypes) => sequelize.define('person', {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
-    allowNull: false,
+    allowNull: false
   },
+  githubId: DataTypes.INTEGER,
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -17,11 +18,11 @@ module.exports = (sequelize, DataTypes) => sequelize.define('person', {
       isEmail: true
     }
   }
-},{
+}, {
   indexes: [
     {
       unique: true,
       fields: ['email']
-    },
+    }
   ]
 });

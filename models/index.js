@@ -1,13 +1,14 @@
 const fs = require('fs');
+const path = require('path');
 const models = {};
 const Sequelize = require('sequelize');
 const database = require('../lib/database');
 
 fs
-.readdirSync('./models')
+.readdirSync(__dirname)
 .filter(file => (file.indexOf('.') !== 0) && (file !== 'index.js'))
 .forEach(modelName => {
-  models[modelName.replace('.js', '')] = database.import(`./${modelName}`);
+  models[modelName.replace('.js', '')] = database.import(path.join(__dirname, modelName));
 });
 
 Object.keys(models).forEach(modelName => {
