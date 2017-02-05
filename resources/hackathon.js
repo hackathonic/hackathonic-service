@@ -1,22 +1,15 @@
 const epilogue = require('epilogue');
+const { handleResourceAccess } = require('../lib/authentication');
 const models = require('../models');
 const CONSTS = require('../consts');
 
 const BadRequestError = epilogue.Errors.BadRequestError;
-const ForbiddenError = epilogue.Errors.ForbiddenError;
 
 const STAGES = Object.keys(CONSTS)
                      .filter(key => /STAGE/.test(key))
                      .map(key => CONSTS[key]);
 
 const isStageValid = stage => STAGES.indexOf(stage) !== -1;
-
-const hackathonAccess = (req, res, context) => {
-  if (!req.isAuthenticated()) {
-    throw new ForbiddenError();
-  }
-  return context.continue;
-};
 
 const hackathonResource = epilogue.resource({
   model: models.Hackathon,
@@ -30,8 +23,8 @@ hackathonResource.update.start((req, res, context) => {
   return context.continue;
 });
 
-hackathonResource.create.auth(hackathonAccess);
-hackathonResource.delete.auth(hackathonAccess);
-hackathonResource.update.auth(hackathonAccess);
+hackathonResource.create.auth(handleResourceAccess);
+hackathonResource.delete.auth(handleResourceAccess);
+hackathonResource.update.auth(handleResourceAccess);
 
 module.exports = hackathonResource;
