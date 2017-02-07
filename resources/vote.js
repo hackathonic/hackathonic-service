@@ -15,24 +15,16 @@ voteResource.update.auth(handleResourceAccess);
 voteResource.delete.auth(handleResourceAccess);
 
 voteResource.create.start((req, res, context) => {
-  const {hackathonId, projectId, personId} = req.body;
-  if (!hackathonId || !projectId || !personId) {
-    throw new BadRequestError('Missing hackathonId, projectId or personId');
+  const { projectId, personId } = req.body;
+  if (!projectId || !personId) {
+    throw new BadRequestError('Missing projectId or personId');
   }
-  return models.Hackathon
-    .findById(hackathonId, {
-      include: [{
-        model: models.Project,
-        where: {
-          id: projectId
-        }
-      }]
-    })
-    .then(hackathon => {
-      if (!hackathon || !hackathon.get('projects') || !hackathon.get('projects').length) {
-        return context.error(400, 'Hackathon or Project with given id does not exist.');
+  return models.Project
+    .findById(projectId)
+    .then(project => {
+      if (!project) {
+        return context.error(400, 'Project with given id does not exist.');
       }
-      const project = hackathon.get('projects')[0];
       return models.Team
         .findById(project.get('teamId'), {
           include: [{
@@ -47,10 +39,10 @@ voteResource.create.start((req, res, context) => {
             return context.error(400, 'Given person is not a member of the team that owns the project.');
           }
           return models.Vote.findAll({
-            where: { hackathonId, personId, projectId }
+            where: { personId, projectId }
           }).then(vote => {
             if (vote.length) {
-              return context.error(400, 'Vote with given personId, hackathonId and projectId already exists.');
+              return context.error(400, 'Vote with given personId and projectId already exists.');
             }
             return context.continue();
           });

@@ -31,7 +31,6 @@ models.Person.belongsToMany(models.Team, {
   through: 'Membership'
 });
 
-models.Hackathon.hasMany(models.Vote);
 models.Project.hasMany(models.Vote);
 models.Person.hasMany(models.Vote);
 

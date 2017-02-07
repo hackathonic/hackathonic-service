@@ -1,8 +1,8 @@
 # hackathonic-service
 
-Master: [![Build Status](https://travis-ci.org/hackathonic/hackathonic-service.svg?branch=master)](https://travis-ci.org/hackathonic/hackathonic-service)
+Master: [![Build Status](https://travis-ci.org/hackathonic/hackathonic-service.svg?branch=master)](https://travis-ci.org/hackathonic/hackathonic-service) Develop: [![Build Status](https://travis-ci.org/hackathonic/hackathonic-service.svg?branch=develop)](https://travis-ci.org/hackathonic/hackathonic-service)
 
-Develop: [![Build Status](https://travis-ci.org/hackathonic/hackathonic-service.svg?branch=develop)](https://travis-ci.org/hackathonic/hackathonic-service)
+## Description
 
 Restful API service for hackathon voting application.
 

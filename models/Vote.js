@@ -15,6 +15,6 @@ module.exports = (sequelize, DataTypes) => sequelize.define('vote', {
   indexes: [{
     name: 'person_vote_for_project',
     unique: true,
-    fields: ['hackathonId', 'projectId', 'personId']
+    fields: ['projectId', 'personId']
   }]
 });
