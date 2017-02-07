@@ -32,10 +32,14 @@ describe('Voting', () => {
     })
     .then(response => {
       hackathonId = response.body.id;
+    })
+    .then(() => {
       return chakram.post('/team', { name: UNIQUE_TEAM_NAME });
     })
     .then(response => {
       teamId = response.body.id;
+    })
+    .then(() => {
       return chakram.post('/project', {
         name: 'Awesomium',
         description: 'An epic project',
@@ -44,8 +48,9 @@ describe('Voting', () => {
       });
     })
     .then(response => {
-      expect(response).to.have.status(201);
       projectId = response.body.id;
+    })
+    .then(() => {
       return chakram.post('/person', {
         name: 'John Doe',
         email: UNIQUE_EMAIL,
