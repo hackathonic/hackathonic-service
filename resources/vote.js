@@ -34,6 +34,7 @@ const voteForOwnTeamCheck = (personId, projectId) => models.Team.findAll({
 
 // @TODO: Check if given project is in the same hackathon as voting person
 // @TODO: Check if given project is in a hackathon with stage==='voting'
+// @TODO: Can't vote for the same project twice, but given vote can be edited.
 voteResource.create.start((req, res, context) => {
   const accessToken = req.query.access_token;
   const { projectId } = req.body;

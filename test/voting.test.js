@@ -16,6 +16,9 @@ const expect = chakram.expect;
 
 chakram.setRequestDefaults({ baseUrl, qs: { access_token: TEST_OAUTH_TOKEN } });
 
+// @TODO: Tests if a vote can be given twice for the same project
+// @TODO: Test if points can be out of range
+// @TODO: Test if points can be not an integer
 describe('Voting', () => {
   let hackathonId;
   let ourProjectId;
@@ -79,7 +82,7 @@ describe('Voting', () => {
     chakram.delete(`/team/${teamId}`)
   ]));
 
-  it('should be possible only if the person takes participate in hackathon which given project is part.', () => {
+  it('should be possible for projects that are not your own', () => {
     return chakram.post('/vote', {
       points: 5,
       projectId: theirProjectId
@@ -92,7 +95,7 @@ describe('Voting', () => {
     });
   });
 
-  it('should be impossible to vote on own project.', () => {
+  it('should be impossible on your own projects.', () => {
     return chakram.post('/vote', {
       points: 5,
       projectId: ourProjectId
