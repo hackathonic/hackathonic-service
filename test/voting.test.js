@@ -25,6 +25,7 @@ describe('Voting', () => {
   let theirProjectId;
   let personId;
   let teamId;
+  let voteId;
 
   before(() => {
     return chakram.post('/hackathon', {
@@ -87,6 +88,7 @@ describe('Voting', () => {
       points: 5,
       projectId: theirProjectId
     }).then(response => {
+      voteId = response.body.id;
       expect(response).to.have.status(201);
       expect(response).to.contain.json({
         points: 5,
@@ -102,6 +104,19 @@ describe('Voting', () => {
     }).then(response => {
       expect(response).to.have.status(400);
       expect(response.body.message).to.match(/already voted/i);
+    });
+  });
+
+  it('should be possible by editing an existing vote', () => {
+    return chakram.put(`/vote/${voteId}`, {
+      points: 6,
+      projectId: theirProjectId
+    }).then(response => {
+      expect(response).to.have.status(200);
+      expect(response).to.contain.json({
+        points: 6,
+        projectId: theirProjectId
+      });
     });
   });
 
