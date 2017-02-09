@@ -10,11 +10,19 @@ module.exports = (sequelize, DataTypes) => sequelize.define('vote', {
     allowNull: true,
     defaultValue: null,
     validate: { min: 0, max: 10 }
+  },
+  projectId: {
+    type: DataTypes.UUID,
+    unique: {
+      name: 'vote',
+      msg: 'Already voted on this project'
+    }
+  },
+  personId: {
+    type: DataTypes.UUID,
+    unique: {
+      name: 'vote',
+      msg: 'Already voted on this project'
+    }
   }
-}, {
-  indexes: [{
-    name: 'person_vote_for_project',
-    unique: true,
-    fields: ['projectId', 'personId']
-  }]
 });

@@ -34,7 +34,6 @@ const voteForOwnTeamCheck = (personId, projectId) => models.Team.findAll({
 
 // @TODO: Check if given project is in the same hackathon as voting person
 // @TODO: Check if given project is in a hackathon with stage==='voting'
-// @TODO: Can't vote for the same project twice, but given vote can be edited.
 voteResource.create.start((req, res, context) => {
   const accessToken = req.query.access_token;
   const { projectId } = req.body;
@@ -53,11 +52,13 @@ voteResource.create.start((req, res, context) => {
           if (!person) {
             return context.error(401, 'Unauthorized');
           }
-          return voteForOwnTeamCheck(person.get('id'), projectId)
+          const personId = person.get('id');
+          return voteForOwnTeamCheck(personId, projectId)
             .then(isVotingForOwnTeam => {
               if (isVotingForOwnTeam) {
                 return context.error(400, 'It\'s not nice to vote for own project.');
               }
+              req.body.personId = personId;
               return context.continue;
             });
         });

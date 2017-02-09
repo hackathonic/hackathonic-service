@@ -16,7 +16,7 @@ const expect = chakram.expect;
 
 chakram.setRequestDefaults({ baseUrl, qs: { access_token: TEST_OAUTH_TOKEN } });
 
-// @TODO: Tests if a vote can be given twice for the same project
+// @TODO: Test if vote can be edited
 // @TODO: Test if points can be out of range
 // @TODO: Test if points can be not an integer
 describe('Voting', () => {
@@ -92,6 +92,16 @@ describe('Voting', () => {
         points: 5,
         projectId: theirProjectId
       });
+    });
+  });
+
+  it('should be impossible twice for the same project', () => {
+    return chakram.post('/vote', {
+      points: 5,
+      projectId: theirProjectId
+    }).then(response => {
+      expect(response).to.have.status(400);
+      expect(response.body.message).to.match(/already voted/i);
     });
   });
 
