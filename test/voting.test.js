@@ -21,8 +21,10 @@ chakram.setRequestDefaults({ baseUrl, qs: { access_token: TEST_OAUTH_TOKEN } });
 // @TODO: Test if points can be not an integer
 describe('Voting', () => {
   let hackathonId;
+  let alienHackathonId;
   let ourProjectId;
   let theirProjectId;
+  let alienProjectId;
   let personId;
   let teamId;
   let voteId;
@@ -35,6 +37,16 @@ describe('Voting', () => {
     })
     .then(response => {
       hackathonId = response.body.id;
+    })
+    .then(() => {
+      return chakram.post('/hackathon', {
+        'name': 'Alien hackathon',
+        'startDate': 1484678880990,
+        'endDate': 1484678880991
+      });
+    })
+    .then(response => {
+      alienHackathonId = response.body.id;
     })
     .then(() => {
       return chakram.post('/team', { name: 'A-Team' });
@@ -64,6 +76,16 @@ describe('Voting', () => {
       ourProjectId = response.body.id;
     })
     .then(() => {
+      return chakram.post('/project', {
+        name: 'Alient project',
+        description: 'Project in different hackathon',
+        hackathonId: alienHackathonId
+      });
+    })
+    .then(response => {
+      alienProjectId = response.body.id;
+    })
+    .then(() => {
       return chakram.post('/person', {
         name: 'John Doe',
         githubId: TEST_PERSON_GITHUB_ID,
@@ -77,8 +99,11 @@ describe('Voting', () => {
   });
 
   after(() => chakram.waitFor([
+    chakram.delete(`/hackathon/${hackathonId}`),
+    chakram.delete(`/hackathon/${alienHackathonId}`),
     chakram.delete(`/project/${ourProjectId}`),
     chakram.delete(`/project/${theirProjectId}`),
+    chakram.delete(`/project/${alienProjectId}`),
     chakram.delete(`/person/${personId}`),
     chakram.delete(`/team/${teamId}`)
   ]));
@@ -127,6 +152,16 @@ describe('Voting', () => {
     }).then(response => {
       expect(response).to.have.status(400);
       expect(response.body.message).to.match(/own project/);
+    });
+  });
+
+  it('should be impossible for projects outside current hackathon', () => {
+    return chakram.post('/vote', {
+      points: 5,
+      projectId: alienProjectId
+    }).then(response => {
+      expect(response).to.have.status(400);
+      expect(response.body.message).to.match(/different hackathon/);
     });
   });
 });
