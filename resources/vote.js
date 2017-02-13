@@ -77,7 +77,6 @@ const projectOutsideHackathonCheck = (personId, projectId) => {
   });
 };
 
-// @TODO: Check if given project is in a hackathon with stage==='voting'
 voteResource.create.start((req, res, context) => {
   const accessToken = req.query.access_token;
   const { projectId } = req.body;
@@ -107,7 +106,7 @@ voteResource.create.start((req, res, context) => {
               return projectOutsideHackathonCheck(personId, projectId)
                 .then(isOutsidehackathon => {
                   if (isOutsidehackathon) {
-                    return context.error(400, 'Cannot vote for projects in different hackathons.');
+                    return context.error(400, 'Project is in hackathon that is in a non-voting stage or you are not participating in that hackathon');
                   }
                   return context.continue;
                 });

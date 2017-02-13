@@ -19,10 +19,13 @@ const expect = chakram.expect;
 chakram.setRequestDefaults({ baseUrl, qs: { access_token: TEST_OAUTH_TOKEN } });
 describe('Voting', () => {
   let hackathonId;
+  let unlistedHackathonId;
   let alienHackathonId;
   let ourProjectId;
+  let ourUnlistedProjectId;
   let theirProjectId;
   let alienProjectId;
+  let unlistedProjectId;
   let personId;
   let teamId;
   let voteId;
@@ -47,6 +50,17 @@ describe('Voting', () => {
     })
     .then(response => {
       alienHackathonId = response.body.id;
+    })
+    .then(() => {
+      return chakram.post('/hackathon', {
+        'name': 'Alien hackathon',
+        'startDate': 1484678880990,
+        'endDate': 1484678880991,
+        'stage': CONSTS.STAGE_UNLISTED
+      });
+    })
+    .then(response => {
+      unlistedHackathonId = response.body.id;
     })
     .then(() => {
       return chakram.post('/team', { name: 'A-Team' });
@@ -77,13 +91,34 @@ describe('Voting', () => {
     })
     .then(() => {
       return chakram.post('/project', {
-        name: 'Alient project',
+        name: 'Our unlisted project',
+        description: 'Our unlisted project description',
+        teamId,
+        hackathonId: unlistedHackathonId
+      });
+    })
+    .then(response => {
+      ourUnlistedProjectId = response.body.id;
+    })
+    .then(() => {
+      return chakram.post('/project', {
+        name: 'Alien project',
         description: 'Project in different hackathon',
         hackathonId: alienHackathonId
       });
     })
     .then(response => {
       alienProjectId = response.body.id;
+    })
+    .then(() => {
+      return chakram.post('/project', {
+        name: 'Unlisted project',
+        description: 'Project in unlisted hackathon',
+        hackathonId: unlistedHackathonId
+      });
+    })
+    .then(response => {
+      unlistedProjectId = response.body.id;
     })
     .then(() => {
       return chakram.post('/person', {
@@ -101,9 +136,12 @@ describe('Voting', () => {
   after(() => chakram.waitFor([
     chakram.delete(`/hackathon/${hackathonId}`),
     chakram.delete(`/hackathon/${alienHackathonId}`),
+    chakram.delete(`/hackathon/${unlistedHackathonId}`),
     chakram.delete(`/project/${ourProjectId}`),
     chakram.delete(`/project/${theirProjectId}`),
     chakram.delete(`/project/${alienProjectId}`),
+    chakram.delete(`/project/${unlistedProjectId}`),
+    chakram.delete(`/project/${ourUnlistedProjectId}`),
     chakram.delete(`/person/${personId}`),
     chakram.delete(`/team/${teamId}`)
   ]));
@@ -128,7 +166,7 @@ describe('Voting', () => {
     });
   });
 
-  it('should be impossible when points not a number', () => {
+  it('should be impossible when points are not a number', () => {
     return chakram.post('/vote', {
       points: 'eleven',
       projectId: theirProjectId
@@ -149,6 +187,16 @@ describe('Voting', () => {
         points: 5,
         projectId: theirProjectId
       });
+    });
+  });
+
+  it('should be impossible for projects that are not in hackathon at voting stage', () => {
+    return chakram.post('/vote', {
+      points: 5,
+      projectId: unlistedProjectId
+    }).then(response => {
+      expect(response).to.have.status(400);
+      expect(response.body.message).to.match(/non-voting stage/i);
     });
   });
 
@@ -191,7 +239,7 @@ describe('Voting', () => {
       projectId: alienProjectId
     }).then(response => {
       expect(response).to.have.status(400);
-      expect(response.body.message).to.match(/different hackathon/);
+      expect(response.body.message).to.match(/you are not participating in that hackathon/);
     });
   });
 });
