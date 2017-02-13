@@ -10,15 +10,13 @@ const {
   TEST_PERSON_EMAIL
 } = process.env;
 
+const CONSTS = require('../consts');
+
 const baseUrl = `http://${HOST}:${PORT}/api/v1`;
 const chakram = require('chakram');
 const expect = chakram.expect;
 
 chakram.setRequestDefaults({ baseUrl, qs: { access_token: TEST_OAUTH_TOKEN } });
-
-// @TODO: Test if vote can be edited
-// @TODO: Test if points can be out of range
-// @TODO: Test if points can be not an integer
 describe('Voting', () => {
   let hackathonId;
   let alienHackathonId;
@@ -33,7 +31,8 @@ describe('Voting', () => {
     return chakram.post('/hackathon', {
       'name': 'Hackathon',
       'startDate': 1484678880990,
-      'endDate': 1484678880991
+      'endDate': 1484678880991,
+      'stage': CONSTS.STAGE_VOTING
     })
     .then(response => {
       hackathonId = response.body.id;
@@ -42,7 +41,8 @@ describe('Voting', () => {
       return chakram.post('/hackathon', {
         'name': 'Alien hackathon',
         'startDate': 1484678880990,
-        'endDate': 1484678880991
+        'endDate': 1484678880991,
+        'stage': CONSTS.STAGE_VOTING
       });
     })
     .then(response => {
@@ -107,6 +107,36 @@ describe('Voting', () => {
     chakram.delete(`/person/${personId}`),
     chakram.delete(`/team/${teamId}`)
   ]));
+
+  it('should be impossible when points are negative', () => {
+    return chakram.post('/vote', {
+      points: -1,
+      projectId: theirProjectId
+    }).then(response => {
+      expect(response).to.have.status(400);
+      expect(response.body.message).to.match(/validation error/i);
+    });
+  });
+
+  it('should be impossible when points are out of range', () => {
+    return chakram.post('/vote', {
+      points: 11,
+      projectId: theirProjectId
+    }).then(response => {
+      expect(response).to.have.status(400);
+      expect(response.body.message).to.match(/validation error/i);
+    });
+  });
+
+  it('should be impossible when points not a number', () => {
+    return chakram.post('/vote', {
+      points: 'eleven',
+      projectId: theirProjectId
+    }).then(response => {
+      expect(response).to.have.status(400);
+      expect(response.body.message).to.match(/validation error/i);
+    });
+  });
 
   it('should be possible for projects that are not your own', () => {
     return chakram.post('/vote', {

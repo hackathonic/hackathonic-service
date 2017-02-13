@@ -2,6 +2,7 @@ const epilogue = require('epilogue');
 const { handleResourceAccess, getUserInfoFromToken } = require('../lib/authentication');
 const models = require('../models');
 const BadRequestError = epilogue.Errors.BadRequestError;
+const CONSTS = require('../consts');
 
 const voteResource = epilogue.resource({
   model: models.Vote,
@@ -32,7 +33,6 @@ const voteForOwnTeamCheck = (personId, projectId) => models.Team.findAll({
   }]
 }).then(teams => teams.length > 0);
 
-// Find all hackathons
 const projectOutsideHackathonCheck = (personId, projectId) => {
   const findOurHackathons = models.Hackathon.findAll({
     attributes: ['id'],
@@ -53,6 +53,9 @@ const projectOutsideHackathonCheck = (personId, projectId) => {
 
   const findTheirHackathons = models.Hackathon.findAll({
     attributes: ['id'],
+    where: {
+      stage: CONSTS.STAGE_VOTING
+    },
     include: [{
       model: models.Project,
       attributes: [],

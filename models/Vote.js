@@ -1,3 +1,6 @@
+const MIN_POINTS = 0;
+const MAX_POINTS = 10;
+
 module.exports = (sequelize, DataTypes) => sequelize.define('vote', {
   id: {
     type: DataTypes.UUID,
@@ -9,7 +12,11 @@ module.exports = (sequelize, DataTypes) => sequelize.define('vote', {
     type: DataTypes.INTEGER,
     allowNull: true,
     defaultValue: null,
-    validate: { min: 0, max: 10 }
+    validate: {
+      isInt: true,
+      min: MIN_POINTS,
+      max: MAX_POINTS
+    }
   },
   projectId: {
     type: DataTypes.UUID,
