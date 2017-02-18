@@ -14,11 +14,6 @@ voteResource.read.auth(handleResourceAccess);
 voteResource.update.auth(handleResourceAccess);
 voteResource.delete.auth(handleResourceAccess);
 
-const getPersonByGithubId = (githubId) => models.Person.findAll({
-  where: { githubId },
-  limit: 1
-}).then(persons => persons[0]);
-
 const voteForOwnTeamCheck = (personId, projectId) => models.Team.findAll({
   include: [{
     model: models.Person,
@@ -90,7 +85,7 @@ voteResource.create.start((req, res, context) => {
         return context.error(401, 'Unauthorized');
       }
       const githubId = userInfo.user.id;
-      return getPersonByGithubId(githubId)
+      return models.Person.findByGithubId(githubId)
         .then(person => {
           if (!person) {
             return context.error(401, 'Unauthorized');

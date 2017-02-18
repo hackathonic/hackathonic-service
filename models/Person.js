@@ -31,5 +31,12 @@ module.exports = (sequelize, DataTypes) => sequelize.define('person', {
       unique: true,
       fields: ['githubId']
     }
-  ]
+  ],
+  classMethods: {
+    findByGithubId: function (githubId) {
+      return this.findOne({
+        where: { githubId }
+      });
+    }
+  }
 });

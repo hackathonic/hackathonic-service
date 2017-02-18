@@ -31,5 +31,12 @@ module.exports = (sequelize, DataTypes) => sequelize.define('hackathon', {
         throw new Error('startDate needs to be set before endDate.');
       }
     }
+  },
+  classMethods: {
+    findByOwnerId: function (ownerId) {
+      return this.findOne({
+        where: { ownerId }
+      });
+    }
   }
 });
