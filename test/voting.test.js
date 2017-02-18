@@ -31,11 +31,21 @@ describe('Voting', () => {
   let voteId;
 
   before(() => {
-    return chakram.post('/hackathon', {
-      'name': 'Hackathon',
-      'startDate': 1484678880990,
-      'endDate': 1484678880991,
-      'stage': CONSTS.STAGE_VOTING
+    return chakram.post('/person', {
+      name: 'John Doe',
+      githubId: TEST_PERSON_GITHUB_ID,
+      email: TEST_PERSON_EMAIL
+    })
+    .then(response => {
+      personId = response.body.id;
+    })
+    .then(() => {
+      return chakram.post('/hackathon', {
+        'name': 'Hackathon',
+        'startDate': 1484678880990,
+        'endDate': 1484678880991,
+        'stage': CONSTS.STAGE_VOTING
+      });
     })
     .then(response => {
       hackathonId = response.body.id;
@@ -121,15 +131,7 @@ describe('Voting', () => {
       unlistedProjectId = response.body.id;
     })
     .then(() => {
-      return chakram.post('/person', {
-        name: 'John Doe',
-        githubId: TEST_PERSON_GITHUB_ID,
-        email: TEST_PERSON_EMAIL,
-        teamId
-      });
-    })
-    .then(response => {
-      personId = response.body.id;
+      return chakram.put(`/person/${personId}`, { teamId });
     });
   });
 

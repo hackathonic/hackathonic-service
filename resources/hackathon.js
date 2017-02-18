@@ -26,5 +26,20 @@ hackathonResource.update.start((req, res, context) => {
 hackathonResource.create.auth(handleResourceAccess);
 hackathonResource.delete.auth(handleResourceAccess);
 hackathonResource.update.auth(handleResourceAccess);
+hackathonResource.create.auth.after((req, res, context) => {
+  const { githubId } = req.user;
+  return models.Person.findAll({
+    where: { githubId },
+    limit: 1
+  })
+  .then(persons => persons[0])
+  .then(person => {
+    if (!person) {
+      return context.error(400, 'Hackathon can be created only by registered person');
+    }
+    req.body.ownerId = person.get('id');
+    return context.continue;
+  });
+});
 
 module.exports = hackathonResource;

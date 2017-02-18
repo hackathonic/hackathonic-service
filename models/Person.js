@@ -10,7 +10,10 @@ module.exports = (sequelize, DataTypes) => sequelize.define('person', {
     primaryKey: true,
     allowNull: false
   },
-  githubId: DataTypes.INTEGER,
+  githubId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -23,6 +26,10 @@ module.exports = (sequelize, DataTypes) => sequelize.define('person', {
     {
       unique: true,
       fields: ['email']
+    },
+    {
+      unique: true,
+      fields: ['githubId']
     }
   ]
 });

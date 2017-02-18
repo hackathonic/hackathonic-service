@@ -20,6 +20,10 @@ Object.keys(models).forEach(modelName => {
 models.sequelize = database;
 models.Sequelize = Sequelize;
 
+models.Hackathon.belongsTo(models.Person, {
+  as: 'owner'
+});
+
 models.Project.belongsTo(models.Hackathon);
 models.Hackathon.hasMany(models.Project);
 
