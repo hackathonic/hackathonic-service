@@ -8,4 +8,7 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database hackathonictest;' -U postgres
+script:
   - npm start &
+  - sleep 5
+  - npm test
